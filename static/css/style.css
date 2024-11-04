@@ -1,0 +1,57 @@
+/* static/css/style.css */
+.graph-container {
+    width: 100%;
+    height: 600px;
+    background-color: rgb(17, 24, 39);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    position: relative;
+    margin: 1rem 0;
+}
+
+.zoom-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: rgba(31, 41, 55, 0.8);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    backdrop-filter: blur(4px);
+}
+
+.zoom-button {
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: 0.375rem;
+    background: rgba(55, 65, 81, 0.8);
+    color: rgb(229, 231, 235);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.zoom-button:hover {
+    background: rgba(75, 85, 99, 0.8);
+}
+
+.node {
+    cursor: pointer;
+}
+
+.node:hover circle {
+    stroke: #60A5FA;
+    stroke-width: 2px;
+}
+
+.node text {
+    user-select: none;
+    pointer-events: none;
+}
+
+.link {
+    stroke-opacity: 0.3;
+}

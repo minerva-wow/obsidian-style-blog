@@ -1,0 +1,227 @@
+<!-- templates/blog/home.html -->
+{% extends 'blog/base.html' %}
+{% block title %}Home - Graph View{% endblock %}
+
+{% block content %}
+<!-- 添加一个额外的容器来确保正确的尺寸 -->
+<div class="container mx-auto px-4">
+    <div class="graph-container relative backdrop-blur-sm rounded-xl" id="graph">
+        <!-- 控制按钮 -->
+        <div class="zoom-controls">
+            <button class="zoom-button" title="Zoom In">+</button>
+            <button class="zoom-button" title="Zoom Out">-</button>
+            <button class="zoom-button" title="Reset">⟲</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- 确保先引入 D3.js -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<style>
+.graph-container {
+    width: 100%;
+    height: 80vh;
+    min-height: 600px;
+    background-color: rgba(17, 24, 39, 0.4);
+    position: relative;
+    margin: 1rem 0;
+}
+
+.zoom-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    border-radius: 8px;
+    backdrop-filter: blur(4px);
+    z-index: 10;
+}
+
+.zoom-button {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.zoom-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* 确保 SVG 容器可见 */
+#graph svg {
+    width: 100%;
+    height: 100%;
+}
+
+
+</style>
+
+<script>
+// 添加调试日志
+console.log('Script starting...');
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded');
+    
+    // 获取容器尺寸
+    const container = document.querySelector('.graph-container');
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    
+    console.log('Container dimensions:', width, height);
+
+    // 创建SVG
+    const svg = d3.select('#graph')
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height)
+        .attr('viewBox', [0, 0, width, height]);
+    
+    console.log('SVG created');
+
+    // 添加缩放组
+    const g = svg.append('g');
+    
+    // 缩放行为
+    const zoom = d3.zoom()
+        .scaleExtent([0.2, 4])
+        .on('zoom', (event) => {
+            g.attr('transform', event.transform);
+        });
+
+    svg.call(zoom);
+
+    // 力导向图配置
+    const simulation = d3.forceSimulation()
+        .force('link', d3.forceLink().id(d => d.id).distance(100))
+        .force('charge', d3.forceManyBody().strength(-100))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('collision', d3.forceCollide().radius(30));
+
+    // 获取数据
+    fetch('{% url "blog:graph-data" %}')
+        .then(response => {
+            console.log('Data fetched');
+            return response.json();
+        })
+        .then(data => {
+            console.log('Data received:', data);
+
+            // 创建连接线
+            const link = g.append('g')
+                .selectAll('line')
+                .data(data.links)
+                .join('line')
+                .attr('stroke', '#4a5568')
+                .attr('stroke-width', 1.5)
+                .attr('opacity', 0.6);
+
+            // 创建节点组
+            const node = g.append('g')
+                .selectAll('g')
+                .data(data.nodes)
+                .join('g')
+                .call(d3.drag()
+                    .subject(d => d)
+                    .on('start', dragstarted)
+                    .on('drag', dragged)
+                    .on('end', dragended));
+
+            // 添加节点光晕
+            node.append('circle')
+                .attr('r', d => d.type === 'post' ? 12 : 8)
+                .attr('fill', d => d.type === 'tag' ? d.color : '#50fa7b')
+                .attr('opacity', 0.3);
+
+            // 添加主节点
+            node.append('circle')
+                .attr('r', d => d.type === 'post' ? 6 : 4)
+                .attr('fill', d => d.type === 'tag' ? d.color : '#50fa7b')
+                .style('filter', 'blur(3px)')     
+
+            // 添加文本标签
+            node.append('text')
+                .text(d => d.label)
+                .attr('x', 12)
+                .attr('y', 4)
+                .attr('font-size', '12px')
+                .attr('fill', '#fff')
+                .style('text-shadow', '1px 1px 2px rgba(0,0,0,0.8)');
+
+            // 点击事件
+            node.on('click', function(event, d) {
+                if (d.type === 'post') {
+                    window.location.href = `/post/${d.slug}/`;
+                } else if (d.type === 'tag') {
+                    window.location.href = `/tag/${d.label}/`;
+                }
+            });
+
+            // 更新布局
+            simulation
+                .nodes(data.nodes)
+                .on('tick', () => {
+                    link
+                        .attr('x1', d => d.source.x)
+                        .attr('y1', d => d.source.y)
+                        .attr('x2', d => d.target.x)
+                        .attr('y2', d => d.target.y);
+
+                    node.attr('transform', d => `translate(${d.x},${d.y})`);
+                });
+
+            simulation.force('link')
+                .links(data.links);
+
+            // 绑定缩放按钮
+            document.querySelectorAll('.zoom-button').forEach((button, index) => {
+                button.addEventListener('click', () => {
+                    if (index === 0) {
+                        svg.transition().duration(750).call(zoom.scaleBy, 1.3);
+                    } else if (index === 1) {
+                        svg.transition().duration(750).call(zoom.scaleBy, 0.7);
+                    } else {
+                        svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+                    }
+                });
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching graph data:', error);
+        });
+
+    function dragstarted(event, d) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+
+    function dragged(event, d) {
+        d.fx = event.x;
+        d.fy = event.y;
+    }
+
+    function dragended(event, d) {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+    }
+});
+</script>
+{% endblock %}
