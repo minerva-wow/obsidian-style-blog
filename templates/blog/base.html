@@ -8,32 +8,29 @@
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="/static/css/style.css" />
   </head>
-  <body class="max-w-7xl bg-gray-900 text-gray-300 min-h-screen py-8 px-4">
+  <body class="max-w-7xl bg-gray-900 py-6 px-4 text-gray-400 mx-auto">
     <!-- Navigation -->
-    <header class="sticky top-0 z-50">
-      <nav class="flex items-center justify-between space-x-4 mx-auto">
-        <a href="/">
-          <span
-            class="text-lg font-semibold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent"
-            >Graph Blog</span
-          >
-        </a>
+    <header class="top-0 z-50 text-gray-300">   
+      <nav class="flex justify-between space-x-2 mx-auto items-center">
+        <a href="/" class="text-center">
+            <span class="text-large lg:text-xl font-semibold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            Andrea's Blog</span>
+          </a>
 
-        <div class="md:flex items-center gap-2 lg:gap-6">
+        <ul class="flex gap-2 lg:gap-10">
           <a href="/" class="hover:text-white transition-colors">Home</a>
           <a href="/posts" class="hover:text-white transition-colors">Posts</a>
           <a href="/about" class="hover:text-white transition-colors">About</a>
-        </div>
+        </ul>
 
-        <div class="flex-1 max-w-xs ml-6 relative">
+        <div class="max-w-xs ml-6 relative">
           <form action="/search" method="GET">
             <input
               type="text"
               name="q"
               placeholder="Search..."
-              class="w-full bg-gray-800 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full bg-gray-800 rounded-lg pl-10 pr-4 py-2 focus:outline-none"
             />
             <svg
               class="w-5 h-5 text-gray-400 absolute left-3 top-2.5"
@@ -54,17 +51,15 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1">
-      <div class="mx-auto">{% block content %}{% endblock %}</div>
+    <main>
+      {% block content %}{% endblock %}
     </main>
 
     <!-- Footer -->
-    <footer>
-      <div class="mx-auto">
-        <div class="text-center text-sm text-gray-400">
-          <p>&copy; {% now "Y" %} Graph Blog. All rights reserved.</p>
-        </div>
-      </div>
+    <footer class="text-center text-sm">
+      <p>
+        &copy; {% now "Y" %} Graph Blog. All rights reserved.
+      </p>
     </footer>
 
     {% block extra_js %}{% endblock %}
