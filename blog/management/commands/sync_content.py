@@ -13,7 +13,7 @@ class Command(BaseCommand):
     
     # 预定义的标签颜色映射
     TAG_COLORS = {
-        'python': '#3572A5',      # Python蓝
+        'python': '#3B82F6',      # Python蓝
         'django': '#44B78B',      # Django浅绿
         'web': '#E44D26',         # HTML橙色
         'javascript': '#F0DB4F',  # JavaScript黄
@@ -128,71 +128,74 @@ class Command(BaseCommand):
                     self.style.ERROR(f'Error processing {filename}: {str(e)}')
                 )
 
+    # 修改 sync_about 方法中处理技术栈的部分
     def sync_about(self):
         """同步about页面内容"""
         about_path = os.path.join(settings.CONTENT_DIR, 'about.md')
         if not os.path.exists(about_path):
             self.stdout.write('About.md not found, skipping...')
             return
-            
+
         try:
             with open(about_path, 'r', encoding='utf-8') as f:
                 about = frontmatter.loads(f.read())
-                
-            # 处理技术栈的颜色
+
+            
+            
             tech_stack = []
-            for tech in about.get('tech_stack', []):
-                tag = tech.get('tag', '').lower()
-                name = tech.get('name', '')
-                icon = tech.get('icon', '')
-                
-                # 使用对应标签的颜色
-                color = self.TAG_COLORS.get(tag, self.get_color_for_tag(tag))
+            for category in about.get('tech_stack', []):
+                processed_items = []
+                for item in category.get('items', []):
+                    # 如果item是字典，获取name；如果是字符串，直接使用
+                    item_name = item.get('name', item) if isinstance(item, dict) else item
+                    # 获取图标（如果存在）
+                    item_icon = item.get('icon', '') if isinstance(item, dict) else ''
+                    
+                    processed_items.append({
+                        'name': item_name,
+                        'icon': item_icon,
+                        'color': self.TAG_COLORS.get(item_name.lower(), self.get_color_for_tag(item_name))
+                    })
                 
                 tech_stack.append({
-                    'name': name,
-                    'color': color,
-                    'icon': icon
+                    'category': category.get('category', ''),
+                    'items': processed_items
                 })
-            
-            # 处理项目的技术标签颜色
+    
+            # 处理项目及其标签
             projects = []
             for project in about.get('projects', []):
-                techs = []
+                project_tags = []
                 for tech in project.get('technologies', []):
-                    color = self.TAG_COLORS.get(tech.lower(), self.get_color_for_tag(tech))
-                    techs.append({
+                    project_tags.append({
                         'name': tech,
-                        'color': color
+                        'color': self.TAG_COLORS.get(tech.lower(), self.get_color_for_tag(tech))
                     })
-                    
+
                 projects.append({
-                    'name': project['name'],
-                    'description': project['description'],
-                    'technologies': techs
+                    'name': project.get('name', ''),
+                    'description': project.get('description', ''),
+                    'technologies': project_tags
                 })
-            
+
             # 构建完整的about内容
             about_content = {
                 'title': about.get('title', 'About Me'),
                 'subtitle': about.get('subtitle', ''),
                 'introduction': about.get('introduction', ''),
                 'tech_stack': tech_stack,
-                'projects': projects,
+                'projects': projects,  # 使用处理后的projects
                 'contact': about.get('contact', {})
             }
-            
+
             # 将内容保存到缓存
-            cache.set('about_content', about_content, timeout=None)  # 永不过期
-            
-            self.stdout.write(
-                self.style.SUCCESS('Successfully synced about page content')
-            )
-                
+            cache.set('about_content', about_content, timeout=None)
+
         except Exception as e:
             self.stdout.write(
                 self.style.ERROR(f'Error processing about.md: {str(e)}')
             )
+
 
     def handle(self, *args, **options):
         """主处理函数"""
