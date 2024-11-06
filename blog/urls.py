@@ -10,7 +10,7 @@ urlpatterns = [
     path('post/<slug:slug>/', views.PostDetailView.as_view(), name='post-detail'),
     path('tag/<str:tag_name>/', views.TagPostListView.as_view(), name='tag-posts'),
     path('search/', views.SearchView.as_view(), name='search'),
-     path('about/', views.about_view, name='about'),  # 添加 about 页面
+    path('about/', views.about, name='about'),
     
     # API
     path('api/graph-data/', views.graph_data, name='graph-data'),

@@ -22,6 +22,16 @@ class Tag(models.Model):
     def post_count(self):
         """返回使用此标签的文章数量"""
         return self.posts.count()
+    
+    def save(self, *args, **kwargs):
+        """保存时将标签名称转为小写"""
+        self.name = self.name.lower()
+        super().save(*args, **kwargs)
+
+    @classmethod
+    def get_or_create_tag(cls, name):
+        """获取或创建标签（大小写不敏感）"""
+        return cls.objects.get_or_create(name=name.lower())
 
 class Post(models.Model):
     """文章模型 - 博客的核心内容"""

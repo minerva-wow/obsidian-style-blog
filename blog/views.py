@@ -28,7 +28,7 @@ class PostListView(BasePostView, ListView):
     """文章列表视图"""
     template_name = 'blog/post_list.html'
     context_object_name = 'posts'
-    paginate_by = 10
+    paginate_by = 2
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -63,7 +63,7 @@ class TagPostListView(BasePostView, ListView):
     """标签文章列表视图"""
     template_name = 'blog/tag_posts.html'
     context_object_name = 'posts'
-    paginate_by = 10
+    paginate_by = 2
 
     def get_queryset(self):
         self.tag = get_object_or_404(Tag, name=self.kwargs['tag_name'])
@@ -78,7 +78,7 @@ class SearchView(BasePostView, ListView):
     """搜索视图"""
     template_name = 'blog/search.html'
     context_object_name = 'results'
-    paginate_by = 10
+    paginate_by = 2
 
     def get_queryset(self):
         query = self.request.GET.get('q', '').strip()
@@ -156,18 +156,9 @@ def graph_data(request):
 
 from django.shortcuts import render
 
-def about_view(request):
-    """关于页面"""
-    context = {
-        'about_content': {
-            'title': 'About Me',
-            'description': 'Welcome to my blog!',
-            'skills': ['Python', 'Django', 'Web Development'],
-            'interests': ['Programming', 'Writing', 'Open Source'],
-            'contact': {
-                'email': 'example@example.com',
-                'github': 'https://github.com/yourusername'
-            }
-        }
-    }
-    return render(request, 'blog/about.html', context)
+def about(request):
+    """关于页面视图"""
+    about_content = cache.get('about_content', {})
+    return render(request, 'blog/about.html', {
+        'about_content': about_content
+    })

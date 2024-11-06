@@ -4,24 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}Graph Blog{% endblock %}</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+    {% load static %}
+    <link href="{% static 'css/tailwind.css' %}" rel="stylesheet">
   </head>
-  <body class="max-w-7xl bg-gray-900 py-6 px-4 text-gray-400 mx-auto">
+  <body class="max-w-7xl bg-gray-900 py-6 px-4 text-gray-300 mx-auto">
     <!-- Navigation -->
-    <header class="top-0 z-50 text-gray-300">   
-      <nav class="flex justify-between space-x-2 mx-auto items-center">
-        <a href="/" class="text-center">
-            <span class="text-large lg:text-xl font-semibold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-            Andrea's Blog</span>
-          </a>
+    <header class="top-0 z-50">
+      <nav class="flex justify-between items-center">
+        <a href="/" class="text-large lg:text-xl font-semibold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+          Andrea's Blog
+        </a>
 
-        <ul class="flex gap-2 lg:gap-10">
-          <a href="/" class="hover:text-white transition-colors">Home</a>
-          <a href="/posts" class="hover:text-white transition-colors">Posts</a>
-          <a href="/about" class="hover:text-white transition-colors">About</a>
+        <ul class="flex gap-2 lg:gap-10 font-semibold">
+          <a href="/" class="text-gray-300 hover:text-white">Home</a>
+          <a href="/posts" class="text-gray-300 hover:text-white">Posts</a>
+          <a href="/about" class="text-gray-300 hover:text-white">About</a>
         </ul>
 
         <div class="max-w-xs ml-6 relative">
@@ -57,9 +54,7 @@
 
     <!-- Footer -->
     <footer class="text-center text-sm">
-      <p>
-        &copy; {% now "Y" %} Graph Blog. All rights reserved.
-      </p>
+      <p>&copy; {% now "Y" %} Graph Blog. All rights reserved.</p>
     </footer>
 
     {% block extra_js %}{% endblock %}
