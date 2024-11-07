@@ -1,8 +1,9 @@
 {% extends 'blog/base.html' %}
-
 {% block title %}{{ post.title }}{% endblock %}
-
 {% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
 <article class="max-w-4xl mx-auto py-6">
     <!-- Hero Section -->
     <div class="text-center mb-6">
@@ -10,7 +11,7 @@
             {{ post.title }}
         </h1>
     </div>
-
+    
     <div class="rounded-xl backdrop-blur-sm mb-8 px-4">
         <div class="flex justify-center text-sm text-gray-400 mb-4 space-x-3">
             <div class="flex items-center">
@@ -44,7 +45,8 @@
     </div>
 
     <!-- Article Content -->
-    <div class="prose prose-invert prose-lg max-w-none mb-8 px-4">
+    {# 文章内容区块 #}
+    <div class="markdown-body px-8">
         {{ post.get_html_content|safe }}
     </div>
 
@@ -100,27 +102,18 @@
 {% endwith %}
 
     <!-- Comments Section -->
-    <div class="mt-12">
-        <h2 class="text-xl md:text-2xl font-semibold mb-4 px-4">Discussion</h2>
+    <div class="mt-12 px-4">
+        <h2 class="text-xl md:text-2xl font-semibold mb-4">Discussion</h2>
         
         <!-- Comments List -->
         {% if post.comments.all %}
             <div class="space-y-6">
                 {% for comment in post.comments.all %}
-                    <article class="px-4 py-6 rounded-xl bg-gray-800/40">
+                    <article class="px-4 py-4 rounded-xl bg-gray-800/40">
                         <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center space-x-3">
-                                <span class="font-medium">{{ comment.name|default:"Anonymous" }}</span>
-                                {% if comment.website %}
-                                    <a href="{{ comment.website }}" 
-                                       class="text-blue-400 text-sm hover:text-blue-300" 
-                                       target="_blank" rel="noopener noreferrer">
-                                        Website
-                                    </a>
-                                {% endif %}
-                            </div>
+                            <span class="font-medium ">{{ comment.name |default:"Anonymous" }}</span>
                             <span class="text-gray-400 text-sm">
-                                {{ comment.created_at|date:"F j, Y" }}
+                                {{ comment.created_at|date:"Y-m-d" }}
                             </span>
                         </div>
                         <div class="text-gray-300">{{ comment.content }}</div>
@@ -128,9 +121,10 @@
                 {% endfor %}
             </div>
         {% endif %}
+        <div id="comments-section"></div>
         
         <!-- Comment Form -->
-        <div class="mt-8 px-4">
+        <div class="mt-8">
             <h3 class="text-xl md:text-2xl font-semibold mb-4">Leave a Comment</h3>
             <form method="post" action="{% url 'blog:add-comment' post.slug %}" class="space-y-6">
                 {% csrf_token %}
@@ -144,11 +138,6 @@
                         <label class="block text-sm text-gray-300 mb-2">Email</label>
                         {{ comment_form.email }}
                     </div>
-                </div>
-                
-                <div>
-                    <label class="block text-sm text-gray-300 mb-2">Website</label>
-                    {{ comment_form.website }}
                 </div>
                 
                 <div>
@@ -177,4 +166,5 @@
         animation: fade-in 0.6s ease-out;
     }
 </style>
+<script>hljs.highlightAll();</script>
 {% endblock %}

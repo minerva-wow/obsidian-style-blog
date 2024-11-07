@@ -4,8 +4,6 @@ slug: python-data-science
 tags: ['Python', 'Data Science', 'Machine Learning']
 ---
 
-# Python for Data Science
-
 Python has become the de facto language for data science. Its rich ecosystem of libraries and tools makes it perfect for data analysis, machine learning, and statistical computing.
 
 ## Essential Libraries

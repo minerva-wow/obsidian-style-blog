@@ -88,3 +88,22 @@ CACHES = {
         'LOCATION': os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/1'),
     }
 }
+
+# Markdown 配置
+MARKDOWN_EXTENSIONS = [
+    'markdown.extensions.extra',        # 包含tables、fenced_code等扩展
+    'markdown.extensions.codehilite',   # 代码高亮
+    'markdown.extensions.toc',          # 目录
+    'markdown.extensions.footnotes',    # 脚注
+]
+
+MARKDOWN_EXTENSION_CONFIGS = {
+    'markdown.extensions.codehilite': {
+        'css_class': 'highlight',
+        'guess_lang': True,
+        'linenums': False,
+    },
+    'markdown.extensions.toc': {
+        'permalink': True,
+    }
+}

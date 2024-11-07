@@ -23,6 +23,8 @@ class Command(BaseCommand):
         'api': '#00FF00',         # API绿
         'tutorial': '#FF6B6B',    # 教程红
         'guide': '#4ECDC4',       # 指南青
+        'c': '#A8B9CC',          # C语言浅蓝灰
+        'c++': '#649FD1',        # C++蓝
     }
     
     # 备用颜色调色板
@@ -139,8 +141,6 @@ class Command(BaseCommand):
         try:
             with open(about_path, 'r', encoding='utf-8') as f:
                 about = frontmatter.loads(f.read())
-
-            
             
             tech_stack = []
             for category in about.get('tech_stack', []):

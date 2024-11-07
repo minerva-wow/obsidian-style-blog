@@ -1,9 +1,9 @@
 # models.py
-
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 import markdown
+from django.conf import settings
 
 class Tag(models.Model):
     """标签模型 - 用于对文章进行分类"""
@@ -65,7 +65,8 @@ class Post(models.Model):
         """将Markdown内容转换为HTML"""
         return markdown.markdown(
             self.content,
-            extensions=['markdown.extensions.fenced_code']
+            extensions=settings.MARKDOWN_EXTENSIONS,
+            extension_configs=settings.MARKDOWN_EXTENSION_CONFIGS
         )
 
     def get_reading_time(self):
@@ -83,9 +84,8 @@ class Post(models.Model):
 class Comment(models.Model):
     """评论模型 - 用于文章评论"""
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-    name = models.CharField(max_length=100)
-    email = models.EmailField()
-    website = models.URLField(blank=True)
+    name = models.CharField(max_length=10, blank=True)
+    email = models.EmailField(blank=True)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 

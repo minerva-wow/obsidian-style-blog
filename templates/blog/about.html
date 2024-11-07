@@ -69,7 +69,8 @@
         <h2 class="text-xl md:text-2xl font-semibold mb-3">Get in Touch</h2>
         <div class="flex flex-wrap gap-3 justify-center">
             {% if about_content.contact.email %}
-                <a href="mailto:{{ about_content.contact.email }}" 
+            <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ about_content.contact.email }}"
+                   target="_blank"
                    class="inline-flex items-center px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-200"
                    style="background-color: #3b82f620; border: 1px solid #3b82f6">
                     <span class="flex items-center space-x-2">

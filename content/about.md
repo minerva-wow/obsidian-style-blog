@@ -7,18 +7,24 @@ tech_stack:
   - category: "Languages"
     items:
       - name: "Python"
-        icon: "</>"
-      - name: "JavaScript"  
-        icon: "{ }"
+        icon: "🐍"  # Python的蛇标志
       - name: "C"
-        icon: "💻"
+        icon: "⚙️"  # 基础语言用齿轮
+      - name: "C++"
+        icon: "⚡"
+      - name: "JavaScript"
+        icon: "{ }"
+      - name: "HTML"
+        icon: "📄"
+      - name: "CSS"
+        icon: "🎨"
       
   - category: "Web Development"
     items:
       - name: "Django"
-        icon: "🔧"
+        icon: "🎸"  # Django创始人是音乐家
       - name: "Vue"
-        icon: "⚡"
+        icon: "👁️"  # Vue = View
       - name: "React"
         icon: "⚛️"
       - name: "Angular"
@@ -36,7 +42,7 @@ tech_stack:
   - category: "Tools & Others"
     items:
       - name: "SolidWorks"
-        icon: "🔨"
+        icon: "📐"  # 工程设计用尺子
       - name: "Git"
         icon: "🔄"
 
@@ -49,6 +55,6 @@ projects:
       - d3
 
 contact:
-  email: your.email@example.com
-  github: https://github.com/yourusername
+  email: andrea.b1062@gmail.com
+  github: https://github.com/minerva-wow
 ---

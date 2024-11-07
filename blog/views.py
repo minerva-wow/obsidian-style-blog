@@ -4,7 +4,9 @@ from django.shortcuts import get_object_or_404, redirect
 from django.db.models import Q
 from django.core.cache import cache
 from django.views.decorators.http import require_POST
+from django.urls import reverse
 from django.http import JsonResponse
+from django.contrib import messages
 from .models import Post, Tag
 from .forms import CommentForm
 
@@ -22,7 +24,7 @@ class BasePostView:
     model = Post
     
     def get_queryset(self):
-        return super().get_queryset().prefetch_related('tags', 'comments')
+        return super().get_queryset().prefetch_related('tags')
 
 class PostListView(BasePostView, ListView):
     """文章列表视图"""
@@ -45,17 +47,25 @@ class PostDetailView(BasePostView, DetailView):
     context_object_name = 'post'
 
     def get_object(self, queryset=None):
-        cache_key = f'post_{self.kwargs["slug"]}'
-        post = cache.get(cache_key)
+        slug = self.kwargs['slug']
+        post = cache.get(f'post_detail_{slug}')
         
         if post is None:
             post = super().get_object(queryset)
-            cache.set(cache_key, post, 60 * 30)
+            cache.set(f'post_detail_{slug}', post, 60 * 30)
             
         return post
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        slug = self.kwargs['slug']
+
+        comments = cache.get(f'post_comments_{slug}')
+        if comments is None:
+            comments = self.object.comments.select_related('post').all()
+            cache.set(f'post_comments_{slug}', comments, 60 * 5)
+        
+        context['comments'] = comments
         context['comment_form'] = CommentForm()
         return context
 
@@ -103,8 +113,23 @@ class SearchView(BasePostView, ListView):
         context['query'] = self.request.GET.get('q', '').strip()
         return context
 
+def ratelimit(request):
+    client_ip = request.META.get('REMOTE_ADDR')
+    cache_key = f'comment_rate:{client_ip}'
+    
+    if cache.get(cache_key, 0) >= 5:  # 5分钟5条评论
+        return True
+        
+    cache.set(cache_key, cache.get(cache_key, 0) + 1, 300)
+    return False
+
+
 @require_POST
 def add_comment(request, slug):
+    if ratelimit(request):
+        messages.error(request, 'Too many comments, try later')
+        return redirect(f'{reverse("blog:post-detail", args=[slug])}#comments-section')
+    
     """添加评论的视图函数"""
     post = get_object_or_404(Post, slug=slug)
     form = CommentForm(request.POST)
@@ -113,9 +138,11 @@ def add_comment(request, slug):
         comment = form.save(commit=False)
         comment.post = post
         comment.save()
-        cache.delete(f'post_{slug}')
+        cache.delete(f'post_comments_{slug}')
+    else:
+        messages.error(request, 'Form validation failed')
         
-    return redirect('blog:post-detail', slug=slug)
+    return redirect(f'{reverse("blog:post-detail", args=[slug])}#comments-section')
 
 def graph_data(request):
     """图表数据API"""
