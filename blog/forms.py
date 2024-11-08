@@ -1,7 +1,6 @@
 # blog/forms.py
 from django import forms
 from .models import Comment
-from django.core.exceptions import ValidationError
 
 class CommentForm(forms.ModelForm):
     class Meta:
@@ -22,9 +21,3 @@ class CommentForm(forms.ModelForm):
                 'placeholder': 'Write your comment here...'
             })
         }
-
-        def clean_content(self):
-            content = self.cleaned_data['content']
-            if len(content) < 3:
-                raise ValidationError('Comment is too short')
-            return content

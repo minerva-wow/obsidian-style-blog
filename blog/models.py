@@ -3,6 +3,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 import markdown
+from django.utils.html import escape
 from django.conf import settings
 
 class Tag(models.Model):
@@ -97,3 +98,8 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.name} on {self.post.title}'
+    
+    def save(self, args, **kwargs):
+        # 转义内容中的HTML标签
+        self.content = escape(self.content)
+        super().save(args, **kwargs)

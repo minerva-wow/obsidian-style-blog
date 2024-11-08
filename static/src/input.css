@@ -47,11 +47,11 @@
     }
 
     .markdown-body pre {
-        @apply bg-gray-800 p-4 rounded-lg mb-4 overflow-x-auto text-white;
+        @apply bg-gray-800 rounded-lg mb-4 overflow-x-auto text-white;
     }
 
     .markdown-body pre code {
-        @apply bg-transparent p-0;
+        @apply bg-transparent;
     }
 
     .markdown-body a {

@@ -275,26 +275,6 @@ document.addEventListener("DOMContentLoaded", function () {
     window._graphObserver = observer;
   }
 
-  // 改进的页面可见性检测
-  function setupPageVisibility() {
-    document.addEventListener("visibilitychange", () => {
-      console.log("Page visibility changed:", document.hidden);
-      if (document.hidden) {
-        cleanup();
-      } else {
-        // 检查容器是否在视口内
-        const rect = container.getBoundingClientRect();
-        const isInViewport = (
-          rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
-          rect.bottom >= 0
-        );
-        if (isInViewport) {
-          restore();
-        }
-      }
-    });
-  }
-
   function setupZoom() {
     if (!svg) return;
 
@@ -362,7 +342,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         // 设置观察者
         setupVisibilityDetection();
-        setupPageVisibility();
       })
       .catch((error) => console.error("Error fetching graph data:", error));
   }
