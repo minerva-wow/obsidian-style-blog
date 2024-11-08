@@ -119,13 +119,13 @@ MARKDOWN_EXTENSION_CONFIGS = {
 }
 
 
-# if not DEBUG:
-#     CSRF_COOKIE_SECURE = True
-#     SESSION_COOKIE_SECURE = True
-#     SECURE_HSTS_SECONDS = 31536000  # 1 年
-#     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-#     SECURE_HSTS_PRELOAD = True
-#     SECURE_SSL_REDIRECT = True
+if not DEBUG:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 年
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_SSL_REDIRECT = True
 
 
 # Static file serving.
@@ -136,3 +136,5 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 } # 用于生产环境, 可以减少静态文件的大小
+
+CSRF_TRUSTED_ORIGINS = ['https://web-production-e7e3.up.railway.app']
