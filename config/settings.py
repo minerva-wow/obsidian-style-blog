@@ -1,12 +1,13 @@
-import dj_database_url
-import os
+# settings.py
 from pathlib import Path
+import os
 from dotenv import load_dotenv
-# Load environment variables
-load_dotenv()
 
 # Build paths
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+env_path = load_dotenv(os.path.join(BASE_DIR, '.env'))
+load_dotenv(env_path)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', 'your-default-secret-key')
@@ -14,7 +15,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'your-default-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['*']  
+ALLOWED_HOSTS = ['127.0.0.1']
 
 # Application definition
 INSTALLED_APPS = [
@@ -59,20 +60,32 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database configuration
 DATABASES = {
-    'default': dj_database_url.config(
-        default='://sqlite/db.sqlite3',
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
+    }
+}
+
+
+import dj_database_url
+
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
         conn_max_age=500,
         conn_health_checks=True,
     )
-}
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Media files
-MEDIA_URL = '/media/'
+MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Content directory for markdown files
@@ -88,10 +101,10 @@ CACHES = {
 
 # Markdown 配置
 MARKDOWN_EXTENSIONS = [
-    'markdown.extensions.extra',
-    'markdown.extensions.codehilite',
-    'markdown.extensions.toc',
-    'markdown.extensions.footnotes',
+    'markdown.extensions.extra',        # 包含tables、fenced_code等扩展
+    'markdown.extensions.codehilite',   # 代码高亮
+    'markdown.extensions.toc',          # 目录
+    'markdown.extensions.footnotes',    # 脚注
 ]
 
 MARKDOWN_EXTENSION_CONFIGS = {
@@ -105,6 +118,7 @@ MARKDOWN_EXTENSION_CONFIGS = {
     }
 }
 
+
 # if not DEBUG:
 #     CSRF_COOKIE_SECURE = True
 #     SESSION_COOKIE_SECURE = True
@@ -113,23 +127,12 @@ MARKDOWN_EXTENSION_CONFIGS = {
 #     SECURE_HSTS_PRELOAD = True
 #     SECURE_SSL_REDIRECT = True
 
-# Static file serving
+
+# Static file serving.
+# https://whitenoise.readthedocs.io/en/stable/django.html#add-compression-and-caching-support
 STORAGES = {
+    # ...
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
-}
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
-}
+} # 用于生产环境, 可以减少静态文件的大小
