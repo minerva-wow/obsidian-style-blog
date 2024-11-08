@@ -1,8 +1,7 @@
-from pathlib import Path
-import os
-from dotenv import load_dotenv
 import dj_database_url
-
+import os
+from pathlib import Path
+from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
@@ -15,7 +14,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'your-default-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,.railway.app').split(',')
+ALLOWED_HOSTS = ['*']  
 
 # Application definition
 INSTALLED_APPS = [
@@ -118,5 +117,19 @@ if not DEBUG:
 STORAGES = {
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
     },
 }
