@@ -1,123 +1,119 @@
-# Obsidian-Style Blog
+# Graph Blog
 
-A Django-based blog system featuring an Obsidian-like graph view of posts and their relationships. This blog system allows you to write posts in Markdown format and visualizes the connections between posts through their tags.
+A Django blog system with an Obsidian-style graph visualization of posts. Write in Markdown, visualize with an interactive network graph.
 
-## Features
+## Key Features
 
-- 📊 Interactive Graph View Homepage
-  - Visual representation of posts and their relationships
-  - Force-directed graph layout using D3.js
-  - Color-coded tags for better visualization
-  
-- 📝 Markdown Support
-  - Write posts in Markdown format
-  - Automatic rendering to HTML
-  - Support for basic Markdown syntax
-  
-- 🏷️ Tag System
-  - Customizable tag colors
-  - Tag-based post organization
-  - Visual representation in graph view
-  
-- 💬 Comments
-  - Comment system for each post
-  - User authentication for commenting
-  
-- 🔄 GitHub Integration
-  - Synchronization with GitHub repository
-  - Version control for your content
-  - Automated content deployment
+- Interactive post visualization using D3.js
+- Markdown content with frontmatter support 
+- Tag-based organization with custom colors
+- Redis caching for performance
+- Basic comment system with rate limiting
+- Mobile-responsive design using Tailwind CSS
 
 ## Tech Stack
 
-- Backend: Django + PostgreSQL
-- Frontend: D3.js for graph visualization
-- Content: Markdown
-- Version Control: Git
+- Python 3.8+
+- Django 4.2
+- PostgreSQL
+- Redis
+- Tailwind CSS
+- D3.js
 
-## Project Structure
+## Local Development
 
-```
-obsidian-style-blog/
-├── config/                 # Django project settings
-├── blog/                   # Main blog application
-├── content/               # Markdown files for posts
-├── templates/             # HTML templates
-│   └── blog/
-│       ├── base.html
-│       ├── home.html
-│       └── post_detail.html
-├── static/                # Static files (CSS, JS)
-├── manage.py
-├── requirements.txt
-└── README.md
-```
-
-## Setup
-
-1. Clone the repository:
+1. Clone and setup environment:
 ```bash
-git clone https://github.com/YOUR_USERNAME/obsidian-style-blog.git
+git clone https://github.com/minerva-wow/obsidian-style-blog.git
 cd obsidian-style-blog
-```
-
-2. Create and activate virtual environment:
-```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Set up the database:
+2. Configure environment variables in `.env`:
+```
+SECRET_KEY=your-secret-key
+DEBUG=True
+DB_NAME=blog_db
+DB_USER=your-db-user
+DB_PASSWORD=your-db-password
+REDIS_URL=redis://localhost:6379/1
+```
+
+3. Initialize database:
 ```bash
 python manage.py migrate
 ```
 
-5. Create a superuser:
-```bash
-python manage.py createsuperuser
-```
-
-6. Run the development server:
+4. Start development server:
 ```bash
 python manage.py runserver
 ```
 
-## Usage
+## Content Management
 
-### Adding Content
+### Blog Posts
+Create markdown files in `content/` directory with frontmatter:
+```markdown
+---
+title: Python for Data Science
+slug: python-data-science
+tags: ['Python', 'Data Science', 'Machine Learning']
+---
 
-1. Create Markdown files in the `content/` directory
-2. Add front matter for tags and metadata
-3. Run the sync script to update the database:
+your content here...
+```
+### About Page
+Create `about.md` in the `content/` directory. Check `content/about.md` in the repository for the complete format and structure.
+After adding or modifying content, run:
 ```bash
 python manage.py sync_content
 ```
 
-### Customizing Tags
+## Development Notes
 
-1. Log in to the admin interface
-2. Navigate to Tags section
-3. Create or edit tags and set their colors
+```bash
+# Watch Tailwind CSS changes
+npm install
+npm run watch
 
-## Contributing
+# Build for production
+npm run build
+# Collect static files
+python manage.py collectstatic --no-input
+```
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## Deployment
+
+> Note: A verified Railway deployment guide will be added soon. The project is currently in testing phase.
+
+For other deployment options, you'll need to:
+
+- Set up PostgreSQL and Redis
+- Configure proper security settings
+- Set up static file serving
+- Use a production WSGI server (e.g., Gunicorn)
+- Configure proper user authentication
+
+## Known Issues
+
+- Redis connection might need additional configuration in production
+- Static file handling needs optimization for production
+- Rate limiting needs more testing under load
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT
 
-## Acknowledgments
+## Contributing
 
-- Inspired by Obsidian's Graph View
-- Built with Django Framework
-- Visualizations powered by D3.js
+Feel free to:
+- Report bugs
+- Suggest features
+- Submit pull requests
+- Improve documentation
+
+## Questions?
+
+Open an issue or submit a PR.
