@@ -29,6 +29,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -69,6 +70,15 @@ DATABASES = {
     }
 }
 
+
+import dj_database_url
+
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=500,
+        conn_health_checks=True,
+    )
+
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -107,3 +117,22 @@ MARKDOWN_EXTENSION_CONFIGS = {
         'permalink': True,
     }
 }
+
+#SECURE_HSTS_SECONDS = 31536000  # 设置为 1 年（单位是秒）
+#SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # 如果你希望包括子域名
+#SECURE_HSTS_PRELOAD = True  # 如果你希望将 HSTS 添加到浏览器预加载列表
+#
+#SECURE_SSL_REDIRECT = True # 强制使用 HTTPS
+#SESSION_COOKIE_SECURE = True  # 仅在 HTTPS 连接中传输会话 cookie
+#CSRF_COOKIE_SECURE = True  # 仅在 HTTPS 连接中传输 CSRF cookie
+
+
+
+# Static file serving.
+# https://whitenoise.readthedocs.io/en/stable/django.html#add-compression-and-caching-support
+STORAGES = {
+    # ...
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+} # 用于生产环境, 可以减少静态文件的大小

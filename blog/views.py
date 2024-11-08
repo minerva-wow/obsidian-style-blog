@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib import messages
 from .models import Post, Tag
+from django.utils.html import escape
 from .forms import CommentForm
 
 class GraphView(TemplateView):
@@ -95,7 +96,8 @@ class SearchView(BasePostView, ListView):
         if not query:
             return Post.objects.none()
 
-        cache_key = f'search_{query}'
+        import hashlib
+        cache_key = f'search_{hashlib.md5(self.query.encode()).hexdigest()}'
         results = cache.get(cache_key)
 
         if results is None:
@@ -110,7 +112,7 @@ class SearchView(BasePostView, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['query'] = self.request.GET.get('q', '').strip()
+        context['query'] = escape(self.query)
         return context
 
 def ratelimit(request):
