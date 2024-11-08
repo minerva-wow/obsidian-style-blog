@@ -118,14 +118,14 @@ MARKDOWN_EXTENSION_CONFIGS = {
     }
 }
 
-#SECURE_HSTS_SECONDS = 31536000  # 设置为 1 年（单位是秒）
-#SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # 如果你希望包括子域名
-#SECURE_HSTS_PRELOAD = True  # 如果你希望将 HSTS 添加到浏览器预加载列表
-#
-#SECURE_SSL_REDIRECT = True # 强制使用 HTTPS
-#SESSION_COOKIE_SECURE = True  # 仅在 HTTPS 连接中传输会话 cookie
-#CSRF_COOKIE_SECURE = True  # 仅在 HTTPS 连接中传输 CSRF cookie
 
+if not DEBUG:
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 年
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_SSL_REDIRECT = True
 
 
 # Static file serving.
