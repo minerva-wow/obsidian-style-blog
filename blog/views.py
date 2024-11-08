@@ -147,7 +147,6 @@ def add_comment(request, slug):
     return redirect(f'{reverse("blog:post-detail", args=[slug])}#comments-section')
 
 def graph_data(request):
-    """图表数据API"""
     cache_key = 'graph_data'
     data = cache.get(cache_key)
     
@@ -155,10 +154,12 @@ def graph_data(request):
         posts = Post.objects.prefetch_related('tags').all()
         nodes = []
         links = []
+        seen_tags = set()  # 使用集合记录已见过的标签
         
         for post in posts:
+            post_id = f'post_{post.id}'
             nodes.append({
-                'id': f'post_{post.id}',
+                'id': post_id,
                 'label': post.title,
                 'type': 'post',
                 'slug': post.slug
@@ -166,7 +167,8 @@ def graph_data(request):
             
             for tag in post.tags.all():
                 tag_id = f'tag_{tag.id}'
-                if not any(node['id'] == tag_id for node in nodes):
+                if tag_id not in seen_tags:  # 使用集合查找更快
+                    seen_tags.add(tag_id)
                     nodes.append({
                         'id': tag_id,
                         'label': tag.name,
@@ -174,12 +176,12 @@ def graph_data(request):
                         'color': tag.color
                     })
                 links.append({
-                    'source': f'post_{post.id}',
+                    'source': post_id,  # 直接使用变量而不是重新构造字符串
                     'target': tag_id
                 })
         
         data = {'nodes': nodes, 'links': links}
-        cache.set(cache_key, data, 60 * 60)
+        cache.set(cache_key, data, 60 * 60 * 24)
     
     return JsonResponse(data)
 

@@ -3,11 +3,11 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
-
 # Build paths
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+env_path = load_dotenv(os.path.join(BASE_DIR, '.env'))
+load_dotenv(env_path)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', 'your-default-secret-key')
@@ -15,7 +15,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'your-default-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = ['127.0.0.1', 'hello-world-andrea.up.railway.app']
 
 # Application definition
 INSTALLED_APPS = [
@@ -119,14 +119,9 @@ MARKDOWN_EXTENSION_CONFIGS = {
 }
 
 
-# if not DEBUG:
-#     CSRF_COOKIE_SECURE = True
-#     SESSION_COOKIE_SECURE = True
-#     SECURE_HSTS_SECONDS = 31536000  # 1 年
-#     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-#     SECURE_HSTS_PRELOAD = True
-#     SECURE_SSL_REDIRECT = True
-
+WHITENOISE_MIDDLEWARE = {
+    'enable_gzip_compression': True,  # 启用gzip压缩
+}
 
 # Static file serving.
 # https://whitenoise.readthedocs.io/en/stable/django.html#add-compression-and-caching-support
@@ -136,3 +131,5 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 } # 用于生产环境, 可以减少静态文件的大小
+
+CSRF_TRUSTED_ORIGINS = ['https://hello-world-andrea.up.railway.app']
