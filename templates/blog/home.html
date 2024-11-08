@@ -145,14 +145,6 @@
     function renderGraph(data, g) {
       if (!g || !data) return;
 
-      const radius = Math.min(width, height) / 4; // 保持不变
-      data.nodes.forEach((node, i) => {
-        const angle = (i / data.nodes.length) * 2 * Math.PI;
-        // 因为我们在初始化时已经将原点移到了中心，所以不需要加width/2和height/2
-        node.x = radius * Math.cos(angle);
-        node.y = radius * Math.sin(angle);
-      });
-
       const link = g
         .append("g")
         .selectAll("line")
