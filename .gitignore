@@ -18,7 +18,6 @@ postgres_data/
 # Media & Static
 media/
 staticfiles/
-static/css/tailwind.css
 
 # Frontend
 node_modules/

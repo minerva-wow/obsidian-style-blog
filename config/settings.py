@@ -119,7 +119,9 @@ MARKDOWN_EXTENSION_CONFIGS = {
 }
 
 
-
+WHITENOISE_MIDDLEWARE = {
+    'enable_gzip_compression': True,  # 启用gzip压缩
+}
 
 # Static file serving.
 # https://whitenoise.readthedocs.io/en/stable/django.html#add-compression-and-caching-support
