@@ -21,6 +21,7 @@ postcss.config.js
 tailwind.config.js
 node_modules/
 staticfiles/ 
+static/src/
 
 
 # IDE & Development
