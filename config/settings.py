@@ -16,6 +16,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'your-default-secret-key')
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = ['hello-world-andrea.up.railway.app', '127.0.0.1']
 
 # Application definition
 INSTALLED_APPS = [
@@ -136,3 +137,5 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 } # 用于生产环境, 可以减少静态文件的大小
+
+CSRF_TRUSTED_ORIGINS = ['https://hello-world-andrea.up.railway.app']
