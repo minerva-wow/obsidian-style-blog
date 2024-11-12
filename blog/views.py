@@ -11,6 +11,13 @@ from .models import Post, Tag
 from django.utils.html import escape
 from .forms import CommentForm
 
+class BasePostView:
+    """基础视图类,提供共享功能"""
+    model = Post
+    
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related('tags')
+    
 class GraphView(TemplateView):
     """图形视图作为首页"""
     template_name = 'blog/home.html'
@@ -19,13 +26,6 @@ class GraphView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['tags'] = Tag.objects.all()
         return context
-
-class BasePostView:
-    """基础视图类,提供共享功能"""
-    model = Post
-    
-    def get_queryset(self):
-        return super().get_queryset().prefetch_related('tags')
 
 class PostListView(BasePostView, ListView):
     """文章列表视图"""
