@@ -1,0 +1,124 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Posts tagged with "{{ tag.name }}"{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-6">
+    <!-- Hero Section -->
+    <div class="text-center mb-6">
+        <h1 class="text-2xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent animate-fade-in py-2">
+            Posts tagged with "{{ tag.name }}"
+        </h1>
+        <div class="mt-2">
+            <a href="{% url 'blog:tag-posts' tag.name %}"
+               class="tag group relative inline-flex items-center px-3 py-1 rounded-full transition-all duration-300 hover:scale-105"
+               style="background-color: {{ tag.color }}20; border: 1px solid {{ tag.color }}">
+                <span class="relative z-10 text-sm" style="color: {{ tag.color }}">
+                    {{ tag.name }}
+                </span>
+                <span class="absolute inset-0 rounded-full opacity-0 group-hover:opacity-20 transition-opacity"
+                      style="background-color: {{ tag.color }}"></span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Posts list -->
+    {% for post in posts %}
+        <a href="{% url 'blog:post-detail' post.slug %}">
+            <article class="px-4 py-6 rounded-xl transition-all duration-300 hover:bg-gray-800/40 hover:transform hover:-translate-y-1 hover:shadow-xl">
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold mb-3">
+                        {{ post.title }}
+                    </h2>
+
+                    <div class="flex text-sm text-gray-400 mb-4 space-x-3">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <span>{{ post.created_at|date:"F j, Y" }}</span>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                            <span>{{ post.get_reading_time }} min read</span>
+                        </div>
+                    </div>
+
+                    <div class="prose prose-invert max-w-none mb-4">
+                        {{ post.excerpt|default:post.content|truncatewords:20|safe }}
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        {% for tag in post.tags.all %}
+                            <div onclick="event.stopPropagation()">
+                                <a href="{% url 'blog:tag-posts' tag.name %}"
+                                   class="tag group relative inline-flex items-center px-3 py-1 rounded-full transition-all duration-300 hover:scale-105"
+                                   style="background-color: {{ tag.color }}20; color: {{ tag.color }}; border: 1px solid {{ tag.color }}">
+                                    <span class="relative z-10 text-xs" style="color: {{ tag.color }}">
+                                        {{ tag.name }}
+                                    </span>
+                                    <span class="absolute inset-0 rounded-full opacity-0 group-hover:opacity-20 transition-opacity"
+                                          style="background-color: {{ tag.color }}"></span>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </article>
+        </a>
+    {% empty %}
+        <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+            <p class="mt-4 text-lg text-gray-400">No posts found with this tag.</p>
+            <a href="{% url 'blog:home' %}" 
+               class="mt-6 inline-block px-4 py-2 rounded-lg hover:bg-gray-700">
+                Return to home
+            </a>
+        </div>
+    {% endfor %}
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+        <div class="flex justify-center items-center space-x-4 mt-12">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}"
+                   class="inline-flex items-center p-2 rounded-lg hover:bg-gray-700">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Previous
+                </a>
+            {% endif %}
+
+            <span class="text-center">
+                Page {{ page_obj.number }} of {{ paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}"
+                   class="inline-flex items-center p-2 rounded-lg hover:bg-gray-700">
+                    Next
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fade-in 0.6s ease-out;
+    }
+</style>
+{% endblock %}

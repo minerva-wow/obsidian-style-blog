@@ -1,0 +1,13 @@
+wheel==0.38.1
+dj-database-url==2.3.0
+Django==4.2.16
+django-crispy-forms==2.3
+django-redis==5.4.0
+gunicorn==23.0.0
+Markdown==3.7
+psycopg2-binary==2.9.10
+python-dotenv==1.0.1
+python-frontmatter==1.1.0
+redis==5.2.0
+whitenoise==6.8.2
+wheel==0.38.1

@@ -1,0 +1,175 @@
+{% extends 'blog/base.html' %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+<article class="max-w-4xl mx-auto py-6">
+    <!-- Hero Section -->
+    <div class="text-center mb-6">
+        <h1 class="text-2xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent animate-fade-in">
+            {{ post.title }}
+        </h1>
+    </div>
+    
+    <div class="rounded-xl backdrop-blur-sm mb-8 px-4">
+        <div class="flex justify-center text-sm text-gray-400 mb-4 space-x-3">
+            <div class="flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span>{{ post.created_at|date:"F j, Y" }}</span>
+            </div>
+            
+            <div class="flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+                <span>{{ post.get_reading_time }} min read</span>
+            </div>
+        </div>
+
+        <div class="flex justify-center flex-wrap gap-2">
+            {% for tag in post.tags.all %}
+                <a href="{% url 'blog:tag-posts' tag.name %}"
+                   class="tag group relative inline-flex items-center px-3 py-1 rounded-full transition-all duration-300 hover:scale-105"
+                   style="background-color: {{ tag.color }}20; border: 1px solid {{ tag.color }}">
+                    <span class="relative z-10 text-xs" style="color: {{ tag.color }}">
+                        {{ tag.name }}
+                    </span>
+                    <span class="absolute inset-0 rounded-full opacity-0 group-hover:opacity-20 transition-opacity"
+                          style="background-color: {{ tag.color }}"></span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+
+
+    <!-- Article Content -->
+    {# 文章内容区块 #}
+    <div class="markdown-body px-8">
+        {{ post.get_html_content|safe }}
+    </div>
+
+    <!-- Related Posts -->
+    {% with related_posts=post.get_related_posts %}
+    {% if related_posts %}
+        <div class="mt-12">
+            <h2 class="text-xl md:text-2xl font-semibold mb-4 px-4">Related Posts</h2>
+            <div class="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {% for related in related_posts %}
+                    <a href="{{ related.get_absolute_url }}" class="block">
+                        <article class="h-full px-4 py-6 rounded-xl transition-all duration-300 hover:bg-gray-800/40 hover:transform hover:-translate-y-1 hover:shadow-xl">
+                            <div>
+                                <h2 class="text-lg md:text-xl font-bold mb-3 line-clamp-2">
+                                    {{ related.title }}
+                                </h2>
+
+                                <div class="flex text-sm text-gray-400 mb-4 space-x-3">
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        <span>{{ related.created_at|date:"F j, Y" }}</span>
+                                    </div>
+
+                                    <div class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                        </svg>
+                                        <span>{{ post.get_reading_time }} min read</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap gap-2">
+                                    {% for tag in related.tags.all %}
+                                        <span class="tag group relative inline-flex items-center px-3 py-1 rounded-full transition-all duration-300"
+                                              style="background-color: {{ tag.color }}20; border: 1px solid {{ tag.color }}">
+                                            <span class="relative z-10 text-xs" style="color: {{ tag.color }}">
+                                                {{ tag.name }}
+                                            </span>
+                                            <span class="absolute inset-0 rounded-full opacity-0 group-hover:opacity-20 transition-opacity"
+                                                  style="background-color: {{ tag.color }}"></span>
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </article>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endwith %}
+
+    <!-- Comments Section -->
+    <div class="mt-12 px-4">
+        <h2 class="text-xl md:text-2xl font-semibold mb-4">Discussion</h2>
+        
+        <!-- Comments List -->
+        {% if post.comments.all %}
+            <div class="space-y-6">
+                {% for comment in post.comments.all %}
+                    <article class="px-4 py-4 rounded-xl bg-gray-800/40">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="font-medium ">{{ comment.name |default:"Anonymous" }}</span>
+                            <span class="text-gray-400 text-sm">
+                                {{ comment.created_at|date:"Y-m-d" }}
+                            </span>
+                        </div>
+                        <div class="text-gray-300">{{ comment.content }}</div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div id="comments-section"></div>
+        
+        <!-- Comment Form -->
+        <div class="mt-8">
+            <h3 class="text-xl md:text-2xl font-semibold mb-4">Leave a Comment</h3>
+            <form method="post" action="{% url 'blog:add-comment' post.slug %}" class="space-y-6">
+                {% csrf_token %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm text-gray-300 mb-2">Name</label>
+                        {{ comment_form.name }}
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-300 mb-2">Email</label>
+                        {{ comment_form.email }}
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm text-gray-300 mb-2">Comment</label>
+                    {{ comment_form.content }}
+                </div>
+
+                <ul class="errorlist">
+                    <li></li>
+                </ul>
+
+                <div class="flex justify-center">
+                    <button type="submit" 
+                            class="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-400 to-purple-500 text-white hover:scale-105 transition-transform opacity-80">
+                        Post Comment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</article>
+
+<style>
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+        animation: fade-in 0.6s ease-out;
+    }
+</style>
+<script>hljs.highlightAll();</script>
+{% endblock %}
