@@ -1,19 +1,18 @@
-[phases.setup]
-nixPkgs = ["python311"]
-
-[phases.install]
-cmds = [
-    "pip install --upgrade pip",
-    "pip install -r requirements.txt"
-]
-
-[phases.build]
-cmds = [
-    "python manage.py collectstatic --noinput",
-    "python manage.py migrate",
-    "python manage.py sync_content"  # 添加内容同步命令
-]
+[build]
+builder = "NIXPACKS"
+buildCommand = """
+pip install --upgrade pip && \
+pip install -r requirements.txt && \
+python manage.py collectstatic --noinput && \
+python manage.py migrate && \
+python manage.py sync_content
+"""
 
 [deploy]
+runtime = "V2"
+numReplicas = 1
 startCommand = "gunicorn config.wsgi:application"
 healthcheckPath = "/"
+sleepApplication = false
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
