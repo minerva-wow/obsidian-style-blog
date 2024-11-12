@@ -132,4 +132,4 @@ STORAGES = {
     },
 } # 用于生产环境, 可以减少静态文件的大小
 
-CSRF_TRUSTED_ORIGINS = ['https://hello-world-andrea.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://hello-world-andrea.up.railway.app', 'http://127.0.0.1' ]
