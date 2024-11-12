@@ -15,13 +15,11 @@ migrations/
 postgres_data/
 
 # Media & Static
-media/
-staticfiles/
-static/css/tailwind.css
-
-# Frontend
+package.json
+package-lock.json
+postcss.config.js
+tailwind.config.js
 node_modules/
-npm-debug.log*
 
 
 # IDE & Development
