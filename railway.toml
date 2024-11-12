@@ -3,15 +3,13 @@ builder = "NIXPACKS"
 buildCommand = """
 pip install --upgrade pip && \
 pip install -r requirements.txt && \
-python manage.py collectstatic --noinput && \
-python manage.py migrate && \
-python manage.py sync_content
+python manage.py collectstatic --noinput
 """
 
 [deploy]
 runtime = "V2"
 numReplicas = 1
-startCommand = "gunicorn config.wsgi:application"
+startCommand = """python manage.py migrate && python manage.py sync_content && gunicorn config.wsgi:application"""
 healthcheckPath = "/"
 sleepApplication = false
 restartPolicyType = "ON_FAILURE"
