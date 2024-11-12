@@ -97,7 +97,7 @@ class SearchView(BasePostView, ListView):
             return Post.objects.none()
 
         import hashlib
-        cache_key = f'search_{hashlib.md5(self.query.encode()).hexdigest()}'
+        cache_key = f'search_{hashlib.md5(query.encode()).hexdigest()}'
         results = cache.get(cache_key)
 
         if results is None:
@@ -112,7 +112,7 @@ class SearchView(BasePostView, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['query'] = escape(self.query)
+        context['query'] = escape(self.request.GET.get('q', '').strip())
         return context
 
 def ratelimit(request):
