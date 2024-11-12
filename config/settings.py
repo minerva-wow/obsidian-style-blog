@@ -126,7 +126,6 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000  # 1 年
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    SECURE_SSL_REDIRECT = True
 
 
 # Static file serving.
